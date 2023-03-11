@@ -19,16 +19,21 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.2'
-//    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
 	implementation 'mysql:mysql-connector-java'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.6'
+
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
+
+	// elastcisearch
+	implementation 'co.elastic.clients:elasticsearch-java:7.17.9'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.2'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
