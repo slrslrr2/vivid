@@ -22,12 +22,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
 	implementation 'mysql:mysql-connector-java'
-	implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.6'
+//	implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.6'
 
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
 
 	// elastcisearch
-	implementation 'co.elastic.clients:elasticsearch-java:7.17.9'
+//	implementation 'co.elastic.clients:elasticsearch-java:7.17.9'
+//	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+	implementation 'co.elastic.clients:elasticsearch-java:8.2.3'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
 	compileOnly 'org.projectlombok:lombok'
