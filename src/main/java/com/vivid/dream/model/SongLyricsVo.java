@@ -7,16 +7,15 @@ import lombok.ToString;
 
 import java.util.Date;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @ToString
-public class SongDetailVo {
+public class SongLyricsVo {
     private Long id;
     private Long melonId;
-    private String albumName;
-    private String imgUrl;
-    private String releaseDate;
-    private Integer genre;
+    private String songName;
+    private String artist;
+    private String lyrics;
     private Date createDate;
 }

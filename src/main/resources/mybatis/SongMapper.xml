@@ -2,8 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.vivid.dream.mapper.SongMapper">
-    <select id="selectSong" resultType="com.vivid.dream.model.SongVo">
-        select * from tb_song where melon_id = #{melon_id}
+    <select id="selectSong" parameterType="java.lang.Long" resultType="com.vivid.dream.model.SongVo">
+        SELECT * FROM tb_song WHERE melon_id = #{melonId}
+    </select>
+
+    <select id="selectSongList" resultType="com.vivid.dream.model.SongVo">
+        SELECT * FROM tb_song WHERE DATE(create_date) = CURDATE();
     </select>
 
     <insert id="insertSong" parameterType="com.vivid.dream.model.SongVo">
@@ -16,7 +20,12 @@
         VALUES (#{melonId}, #{albumName}, #{imageUrl}, #{imageThumbUrl}, #{releaseDate}, #{genre}, NOW())
     </insert>
 
+    <insert id="insertSongLyrics" parameterType="com.vivid.dream.model.SongLyricsVo">
+        INSERT INTO tb_song_lyrics (melon_id, song_name, artist, lyrics, create_date)
+        VALUES (#{melonId}, #{songName}, #{artist}, #{lyrics}, NOW())
+    </insert>
+
     <select id="selectRecentDataBySong" resultType="java.util.Date">
-        select create_date from tb_song order by create_date desc limit 1
+        SELECT create_date FROM tb_song ORDER BY create_date DESC LIMIT 1
     </select>
 </mapper>

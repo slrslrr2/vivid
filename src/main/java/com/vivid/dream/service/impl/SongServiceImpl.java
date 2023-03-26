@@ -1,9 +1,13 @@
 package com.vivid.dream.service.impl;
 
+import com.vivid.dream.enums.GenreEnum;
+import com.vivid.dream.mapper.SongMapper;
 import com.vivid.dream.model.SongDetailVo;
+import com.vivid.dream.model.SongLyricsVo;
 import com.vivid.dream.model.SongVo;
 import com.vivid.dream.service.SongService;
 import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,19 +16,24 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@RequiredArgsConstructor
 public class SongServiceImpl implements SongService {
-    //    private final TestMapper testMapper;
+    private final SongMapper songMapper;
 
     @Resource(name = "getSongDetailTaskExecutor")
     private TaskExecutor getSongDetailTaskExecutor;
 
+    @Resource(name = "getSongLyricsTaskExecutor")
+    private TaskExecutor getSongLyricsTaskExecutor;
+
 //    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "* 47 * * * ?")
+    @Scheduled(cron = "1 * * * * ?")
     public void getSongInfo(){
+        // TODO: Redis Lock
 //        boolean lock = false;
         try {
 //            lock = RedisLockUtils.tryLock(redisTemplate, NftConstants.MODIFY_START_PROJECT_LOCK, 10000);
@@ -36,44 +45,16 @@ public class SongServiceImpl implements SongService {
             Document doc = Jsoup.connect("https://www.melon.com/chart/index.htm").get();
             Elements trElement = doc.select("div#tb_list table tbody tr");
 
-            HashSet<String> strings = new HashSet<>();
             for (Element tr : trElement) {
-                SongVo song = createSong(tr);
-
-//                CompletableFuture.runAsync(() -> {
-                    try{
-                        Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId="+song.getMelonId()).get();
-                        Elements metaElemet = songDetailDoc.select("form#downloadfrm .meta .list dd");
-                        String albumName = metaElemet.get(0).select("a").text();
-                        String releaseDate = metaElemet.get(1).text();
-                        String genre = metaElemet.get(2).text();
-
-                        strings.add(genre);
-
-//                        SongDetailVo.builder()
-//                                .melonId(song.getMelonId())
-
-
-                        //melon_id bigint DEFAULT 0 COMMENT 'melon id',
-                        //album_name VARCHAR(100) NOT NULL COMMENT '앨범명',
-                        //image_url VARCHAR(200) NOT NULL COMMENT '커버 이미지 URL',
-                        //image_thumb_url VARCHAR(200) NOT NULL COMMENT '커버 이미지 썸네일 URL',
-                        //release_date VARCHAR(10) NOT NULL COMMENT '발매일',
-                        //genre tinyint(4) NOT NULL COMMENT '장르',
-                        //create_date DATE NOT NULL,
-                        //PRIMARY KEY (`id`),
-                        //UNIQUE KEY `melon_id` (`melon_id`)
-
-                    } catch (Exception e) {
-                        // log.warn
-                    }
-//                }, getSongDetailTaskExecutor);
+                createSong(tr);
             }
-            System.out.println("-------------");
-            for (String string : strings) {
-                System.out.println(string);
+
+            List<SongVo> songs = songMapper.selectSongList();
+            for (SongVo song : songs) {
+                createSongDetail(song);
+                createSongLyrics(song);
             }
-            System.out.println("-------------");
+
         } catch (Exception e) {
 //            log.warn("fixedProjectStatusModify error {}", e.getMessage(), e);
         } finally {
@@ -81,6 +62,49 @@ public class SongServiceImpl implements SongService {
 //                RedisLockUtils.releaseLock(redisTemplate, NftConstants.MODIFY_START_PROJECT_LOCK);
 //            }
         }
+    }
+
+    private void createSongDetail(SongVo song) {
+        CompletableFuture.runAsync(() -> {
+            try{
+                Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId="+ song.getMelonId()).get();
+                Elements metaElemet = songDetailDoc.select("form#downloadfrm .meta .list dd");
+                String albumName = metaElemet.get(0).select("a").text();
+                String releaseDate = metaElemet.get(1).text();
+                GenreEnum genre = GenreEnum.findGenreEnumByDescription(metaElemet.get(2).text());
+                String imgUrl = songDetailDoc.select("form#downloadfrm .image_typeAll img").attr("src");
+                SongDetailVo songDetail = SongDetailVo.builder()
+                        .melonId(song.getMelonId())
+                        .albumName(albumName)
+                        .imgUrl(imgUrl)
+                        .releaseDate(releaseDate)
+                        .genre(genre.getValue())
+                        .build();
+
+                songMapper.insertSongDetail(songDetail);
+            } catch (Exception e) {
+                // log.warn
+            }
+        }, getSongDetailTaskExecutor);
+    }
+
+    private void createSongLyrics(SongVo song) {
+        CompletableFuture.runAsync(() -> {
+            try{
+                Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId="+ song.getMelonId()).get();
+                String lyrics = songDetailDoc.select("div#d_video_summary").text();
+                SongLyricsVo songLyrics = SongLyricsVo.builder()
+                        .melonId(song.getMelonId())
+                        .songName(song.getSongName())
+                        .artist(song.getArtist())
+                        .lyrics(lyrics)
+                        .build();
+
+                songMapper.insertSongLyrics(songLyrics);
+            } catch (Exception e) {
+                // log.warn
+            }
+        }, getSongDetailTaskExecutor);
     }
 
     private SongVo createSong(Element tr) {
@@ -96,8 +120,12 @@ public class SongServiceImpl implements SongService {
                 .rank(rank)
                 .build();
 
-        // int songMapper.insertSong(song); Enum 만들기
-        // throw ServieException
+        int result = songMapper.insertSong(song);
+
+        if(result != 1){
+            // TODO: Loging
+        }
+        // TODO: throw ServieException, AdviceController
 
         return song;
     }
