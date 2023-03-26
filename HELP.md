@@ -9,7 +9,7 @@ CREATE TABLE tb_song (
     melon_id bigint DEFAULT 0 COMMENT 'melon id',
     song_name VARCHAR(100) NOT NULL COMMENT '노래제목',
     artist VARCHAR(30) NOT NULL COMMENT '아티스트',
-    ranking int(4) COMMENT '순위',
+    rank int(4) COMMENT '순위',
     create_date DATE NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `melon_id` (`melon_id`)

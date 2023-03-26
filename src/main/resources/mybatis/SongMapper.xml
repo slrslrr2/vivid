@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vivid.dream.mapper.SongMapper">
+    <select id="selectSong" resultType="com.vivid.dream.model.SongVo">
+        select * from tb_song where melon_id = #{melon_id}
+    </select>
+
+    <insert id="insertSong" parameterType="com.vivid.dream.model.SongVo">
+        INSERT INTO member (melon_id, song_name, artist, rank, create_date)
+        VALUES (#{melonId}, #{songName}, #{artist}, #{rank}, NOW())
+    </insert>
+
+    <insert id="insertSongDetail" parameterType="com.vivid.dream.model.SongDetailVo">
+        INSERT INTO tb_song_detail (melon_id, album_name, image_url, image_thumb_url, release_date, genre, create_date)
+        VALUES (#{melonId}, #{albumName}, #{imageUrl}, #{imageThumbUrl}, #{releaseDate}, #{genre}, NOW())
+    </insert>
+
+    <select id="selectRecentDataBySong" resultType="java.util.Date">
+        select create_date from tb_song order by create_date desc limit 1
+    </select>
+</mapper>
