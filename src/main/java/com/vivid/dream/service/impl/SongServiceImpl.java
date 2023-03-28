@@ -16,7 +16,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -24,11 +23,14 @@ import java.util.concurrent.CompletableFuture;
 public class SongServiceImpl implements SongService {
     private final SongMapper songMapper;
 
-    @Resource(name = "getSongDetailTaskExecutor")
-    private TaskExecutor getSongDetailTaskExecutor;
+    @Resource(name = "songTaskExecutor")
+    private TaskExecutor songTaskExecutor;
 
-    @Resource(name = "getSongLyricsTaskExecutor")
-    private TaskExecutor getSongLyricsTaskExecutor;
+    @Resource(name = "songDetailTaskExecutor")
+    private TaskExecutor songDetailTaskExecutor;
+
+    @Resource(name = "songLyricsTaskExecutor")
+    private TaskExecutor songLyricsTaskExecutor;
 
 //    @Scheduled(cron = "0 0 0 * * ?")
     @Scheduled(cron = "1 * * * * ?")
@@ -46,13 +48,13 @@ public class SongServiceImpl implements SongService {
             Elements trElement = doc.select("div#tb_list table tbody tr");
 
             for (Element tr : trElement) {
-                createSong(tr);
-            }
-
-            List<SongVo> songs = songMapper.selectSongList();
-            for (SongVo song : songs) {
-                createSongDetail(song);
-                createSongLyrics(song);
+                createSong(tr)
+                    .thenCompose(songVo -> createSongDetail(songVo))
+                    .thenAccept(songVo -> createSongLyrics(songVo))
+                    .exceptionally(throwable -> {
+                        System.out.println(throwable.getMessage());
+                        return null;
+                    });
             }
 
         } catch (Exception e) {
@@ -64,10 +66,37 @@ public class SongServiceImpl implements SongService {
         }
     }
 
-    private void createSongDetail(SongVo song) {
-        CompletableFuture.runAsync(() -> {
-            try{
-                Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId="+ song.getMelonId()).get();
+    private CompletableFuture<SongVo> createSong(Element tr) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Long melonId = Long.parseLong(tr.attr("data-song-no"));
+                Integer rank = Integer.parseInt(tr.select("span.rank").first().text());
+                String songName = tr.select("div.wrap_song_info .rank01 a").text();
+                String artist = tr.select("div.wrap_song_info .rank02 .checkEllipsis a").text();
+
+                SongVo song = SongVo.builder()
+                        .melonId(melonId)
+                        .songName(songName)
+                        .artist(artist)
+                        .rank(rank)
+                        .build();
+
+                int insertCount = songMapper.insertSong(song);
+                if (insertCount != 1) {
+                    throw new RuntimeException("Failed to insert song: " + song);
+                }
+
+                return song;
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        }, songTaskExecutor);
+    };
+
+    private CompletableFuture<SongVo> createSongDetail(SongVo song) throws RuntimeException{
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId=" + song.getMelonId()).get();
                 Elements metaElemet = songDetailDoc.select("form#downloadfrm .meta .list dd");
                 String albumName = metaElemet.get(0).select("a").text();
                 String releaseDate = metaElemet.get(1).text();
@@ -81,15 +110,19 @@ public class SongServiceImpl implements SongService {
                         .genre(genre.getValue())
                         .build();
 
-                songMapper.insertSongDetail(songDetail);
+                int insertCount = songMapper.insertSongDetail(songDetail);
+                if (insertCount != 1) {
+                    throw new RuntimeException("Failed to insert song detail: " + songDetail);
+                }
             } catch (Exception e) {
-                // log.warn
+                throw new RuntimeException(e);
             }
-        }, getSongDetailTaskExecutor);
+            return song;
+        }, songDetailTaskExecutor);
     }
 
-    private void createSongLyrics(SongVo song) {
-        CompletableFuture.runAsync(() -> {
+    private CompletableFuture<Void> createSongLyrics(SongVo song) {
+        return CompletableFuture.runAsync(() -> {
             try{
                 Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId="+ song.getMelonId()).get();
                 String lyrics = songDetailDoc.select("div#d_video_summary").text();
@@ -100,33 +133,13 @@ public class SongServiceImpl implements SongService {
                         .lyrics(lyrics)
                         .build();
 
-                songMapper.insertSongLyrics(songLyrics);
+                int result = songMapper.insertSongLyrics(songLyrics);
+                if (result != 1) {
+                    throw new RuntimeException("Error inserting song lyrics");
+                }
             } catch (Exception e) {
-                // log.warn
+                throw new RuntimeException(e);
             }
-        }, getSongDetailTaskExecutor);
-    }
-
-    private SongVo createSong(Element tr) {
-        Long melonId = Long.parseLong(tr.attr("data-song-no"));
-        Integer rank = Integer.parseInt(tr.select("span.rank").first().text());
-        String songName = tr.select("div.wrap_song_info .rank01 a").text();
-        String artist = tr.select("div.wrap_song_info .rank02 .checkEllipsis a").text();
-
-        SongVo song = SongVo.builder()
-                .melonId(melonId)
-                .songName(songName)
-                .artist(artist)
-                .rank(rank)
-                .build();
-
-        int result = songMapper.insertSong(song);
-
-        if(result != 1){
-            // TODO: Loging
-        }
-        // TODO: throw ServieException, AdviceController
-
-        return song;
+        }, songLyricsTaskExecutor);
     }
 }
