@@ -23,5 +23,5 @@ public interface SongMapper {
 
     int insertSongLyrics(SongLyricsVo SongLyrics);
 
-    Optional<Date> selectRecentDataBySong();
+    Optional<Integer> selectNowDataCount();
 }

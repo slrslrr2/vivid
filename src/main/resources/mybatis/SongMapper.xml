@@ -11,7 +11,7 @@
     </select>
 
     <insert id="insertSong" parameterType="com.vivid.dream.model.SongVo">
-        INSERT INTO member (melon_id, song_name, artist, rank, create_date)
+        INSERT INTO tb_song (melon_id, song_name, artist, rank, create_date)
         VALUES (#{melonId}, #{songName}, #{artist}, #{rank}, NOW())
     </insert>
 
@@ -25,7 +25,7 @@
         VALUES (#{melonId}, #{songName}, #{artist}, #{lyrics}, NOW())
     </insert>
 
-    <select id="selectRecentDataBySong" resultType="java.util.Date">
-        SELECT create_date FROM tb_song ORDER BY create_date DESC LIMIT 1
+    <select id="selectNowDataCount" resultType="Integer">
+        SELECT count(id) FROM tb_song WHERE create_date >= CURDATE() LIMIT 1
     </select>
 </mapper>

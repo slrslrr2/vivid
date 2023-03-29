@@ -7,28 +7,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class Executor {
-    @Bean(name = "getSongDetailTaskExecutor")
-    public TaskExecutor getSongDetailTaskExecutor() {
+    @Bean(name = "songTaskExecutor")
+    public TaskExecutor songTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(100);
         executor.setKeepAliveSeconds(60);
-        executor.setThreadNamePrefix("getSongDetailTaskExecutor-");
-        executor.setAwaitTerminationSeconds(60);
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.initialize();
-        return executor;
-    }
-
-    @Bean(name = "getSongLyricsTaskExecutor")
-    public TaskExecutor getSongLyricsTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
-        executor.setKeepAliveSeconds(60);
-        executor.setThreadNamePrefix("getSongLyricsTaskExecutor-");
+        executor.setThreadNamePrefix("songTaskExecutor-");
         executor.setAwaitTerminationSeconds(60);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();

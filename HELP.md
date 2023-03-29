@@ -32,6 +32,8 @@ DROP TABLE IF EXISTS `tb_song_lyrics`;
 CREATE TABLE tb_song_lyrics (
     id bigint NOT NULL AUTO_INCREMENT,
     melon_id bigint DEFAULT 0 COMMENT 'melon id',
+    song_name VARCHAR(100) NOT NULL COMMENT '노래제목',
+    artist VARCHAR(30) NOT NULL COMMENT '아티스트',
     lyrics TEXT NOT NULL COMMENT '가사',
     create_date DATE NOT NULL,
     PRIMARY KEY (`id`),
