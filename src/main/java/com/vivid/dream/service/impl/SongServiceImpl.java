@@ -8,12 +8,16 @@ import com.vivid.dream.model.SongVo;
 import com.vivid.dream.service.SongService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.lang.annotation.Aspect;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -31,7 +35,6 @@ public class SongServiceImpl implements SongService {
     private TaskExecutor songTaskExecutor;
 
     //    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional(rollbackFor = Throwable.class)
     @Scheduled(cron = "1 * * * * ?")
     public void getSongInfo(){
         // TODO: Redis Lock
@@ -51,7 +54,8 @@ public class SongServiceImpl implements SongService {
             for (Element tr : trElement) {
                 CompletableFuture.runAsync(() -> {
                     try {
-                        createSongByMelonChart(tr);
+                        SongService songService = (SongService) AopContext.currentProxy();
+                        songService.createSongByMelonChart(tr);
                     } catch (Exception e) {
                         throw new RuntimeException(e.getMessage());
                     }
@@ -74,15 +78,12 @@ public class SongServiceImpl implements SongService {
         }
     }
 
-    @Transactional
-    void createSongByMelonChart(Element tr) throws RuntimeException {
-        try{
-            SongVo song = createSong(tr);
-            createSongDetail(song.getMelonId());
-            createSongLyrics(song);
-        } catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public void createSongByMelonChart(Element tr) {
+        SongVo song = createSong(tr);
+        createSongDetail(song.getMelonId());
+        createSongLyrics(song);
     }
 
     private SongVo createSong(Element tr){
