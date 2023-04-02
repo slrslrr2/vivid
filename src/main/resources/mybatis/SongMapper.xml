@@ -15,10 +15,18 @@
         VALUES (#{melonId}, #{songName}, #{artist}, #{rank}, NOW())
     </insert>
 
+    <select id="selectSongDetail" parameterType="java.lang.Long" resultType="com.vivid.dream.model.SongDetailVo">
+        SELECT * FROM tb_song_detail WHERE melon_id = #{melonId}
+    </select>
+
     <insert id="insertSongDetail" parameterType="com.vivid.dream.model.SongDetailVo">
         INSERT INTO tb_song_detail (melon_id, album_name, img_url, release_date, genre, create_date)
         VALUES (#{melonId}, #{albumName}, #{imgUrl}, #{releaseDate}, #{genre}, NOW())
     </insert>
+
+    <select id="selectSongLyrics" parameterType="java.lang.Long" resultType="com.vivid.dream.model.SongLyricsVo">
+        SELECT * FROM tb_song_lyrics WHERE melon_id = #{melonId}
+    </select>
 
     <insert id="insertSongLyrics" parameterType="com.vivid.dream.model.SongLyricsVo">
         INSERT INTO tb_song_lyrics (melon_id, song_name, artist, lyrics, create_date)

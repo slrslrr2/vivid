@@ -11,7 +11,6 @@ CREATE TABLE `tb_song` (
   `rank` int(4) DEFAULT NULL COMMENT '순위',
   `create_date` date NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `melon_id` (`melon_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 

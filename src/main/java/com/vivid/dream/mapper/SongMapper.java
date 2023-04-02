@@ -19,7 +19,11 @@ public interface SongMapper {
 
     int insertSong(SongVo song);
 
+    Optional<SongDetailVo> selectSongDetail(Long melonId);
+
     int insertSongDetail(SongDetailVo song);
+
+    Optional<SongLyricsVo> selectSongLyrics(Long melonId);
 
     int insertSongLyrics(SongLyricsVo SongLyrics);
 

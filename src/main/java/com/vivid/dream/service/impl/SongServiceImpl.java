@@ -1,5 +1,6 @@
 package com.vivid.dream.service.impl;
 
+import com.vivid.dream.config.handler.ResultCode;
 import com.vivid.dream.enums.GenreEnum;
 import com.vivid.dream.mapper.SongMapper;
 import com.vivid.dream.model.SongDetailVo;
@@ -19,7 +20,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -33,11 +35,11 @@ public class SongServiceImpl implements SongService {
 
     //    @Scheduled(cron = "0 0 0 * * ?")
     @Scheduled(cron = "1 * * * * ?")
-    public void getSongInfo(){
+    public void crawlingMelonChart(){
         try {
             Integer nowDateCountBySong = songMapper.selectNowDataCount().orElse(0);
             if(nowDateCountBySong > 0)
-                throw new Exception("Failed to there are songs registered today" + LocalDate.now());
+                log.warn("regist top 100 song {} {}", LocalDateTime.now(), ResultCode.TODAY_SONG_TOP100_IS_EXIST.getDesc());
 
             Document doc = Jsoup.connect("https://www.melon.com/chart/index.htm").get();
             Elements trElement = doc.select("div#tb_list table tbody tr");
@@ -52,14 +54,13 @@ public class SongServiceImpl implements SongService {
                     }
                 }, songTaskExecutor)
                 .exceptionally(throwable -> {
-                    System.out.println("Fail createSongByMelonChart=> " + LocalDate.now());
-                    System.out.println(throwable.getMessage());
+                    log.warn("crawlingMelonChart Failed error {}", throwable.getMessage(), throwable);
                     return null;
                 });
             }
 
         } catch (Exception e) {
-            log.warn("fixedProjectStatusModify error {}", e.getMessage(), e);
+            log.warn("crawlingMelonChart Failed error {}", e.getMessage(), e);
         }
     }
 
@@ -72,13 +73,14 @@ public class SongServiceImpl implements SongService {
     }
 
     private SongVo createSong(Element tr){
+        SongVo song = null;
         try {
             Long melonId = Long.parseLong(tr.attr("data-song-no"));
             Integer rank = Integer.parseInt(tr.select("span.rank").first().text());
             String songName = tr.select("div.wrap_song_info .rank01 a").text();
             String artist = tr.select("div.wrap_song_info .rank02 .checkEllipsis a").text();
 
-            SongVo song = SongVo.builder()
+            song = SongVo.builder()
                     .melonId(melonId)
                     .songName(songName)
                     .artist(artist)
@@ -87,17 +89,21 @@ public class SongServiceImpl implements SongService {
 
             int result = songMapper.insertSong(song);
             if (result != 1) {
-                throw new RuntimeException("Failed to insert song | melonId:" + song.getMelonId());
+                log.warn("createSong Failed | melonId: {}", song.getMelonId());
             }
 
-            return song;
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            log.warn("createSong Failed error {}", e.getMessage(), e);
         }
+
+        return song;
     }
 
     private void createSongDetail(Long melonId){
         try{
+            Optional<SongDetailVo> preSongDetail = songMapper.selectSongDetail(melonId);
+            if(preSongDetail.isPresent()) return;
+
             Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId=" + melonId).get();
             Elements metaElement = songDetailDoc.select("form#downloadfrm .meta .list dd");
             String albumName = metaElement.get(0).select("a").text();
@@ -114,15 +120,18 @@ public class SongServiceImpl implements SongService {
 
             int result = songMapper.insertSongDetail(songDetail);
             if (result != 1) {
-                throw new RuntimeException("Failed to insert song detail | melonId:" + songDetail.getMelonId());
+                log.warn("createSongDetail Failed | melonId: {}", melonId);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            log.warn("createSongDetail Failed error {}", e.getMessage(), e);
         }
     }
 
     private void createSongLyrics(SongVo song){
         try {
+            Optional<SongLyricsVo> preSongLyrics = songMapper.selectSongLyrics(song.getMelonId());
+            if(preSongLyrics.isPresent()) return;
+
             Document songDetailDoc = Jsoup.connect("https://www.melon.com/song/detail.htm?songId=" + song.getMelonId()).get();
             String lyrics = songDetailDoc.select("div#d_video_summary").text();
             SongLyricsVo songLyrics = SongLyricsVo.builder()
@@ -134,10 +143,10 @@ public class SongServiceImpl implements SongService {
 
             int result = songMapper.insertSongLyrics(songLyrics);
             if (result != 1) {
-                throw new RuntimeException("Failed to insert song lyrics | melonId:" + song.getMelonId());
+                log.warn("createSongLyrics Failed | melonId: {}", song.getMelonId());
             }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            log.warn("createSongLyrics Failed error {}", e.getMessage(), e);
         }
     }
 }
