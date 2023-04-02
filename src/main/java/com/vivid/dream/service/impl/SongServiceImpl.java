@@ -8,24 +8,21 @@ import com.vivid.dream.model.SongVo;
 import com.vivid.dream.service.SongService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.Aspect;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.aop.framework.AopContext;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SongServiceImpl implements SongService {
@@ -37,24 +34,18 @@ public class SongServiceImpl implements SongService {
     //    @Scheduled(cron = "0 0 0 * * ?")
     @Scheduled(cron = "1 * * * * ?")
     public void getSongInfo(){
-        // TODO: Redis Lock
-//        boolean lock = false;
         try {
-//            lock = RedisLockUtils.tryLock(redisTemplate, NftConstants.MODIFY_START_PROJECT_LOCK, 10000);
-//            if (!lock) {
-//                return;
-//            }
-
             Integer nowDateCountBySong = songMapper.selectNowDataCount().orElse(0);
             if(nowDateCountBySong > 0)
                 throw new Exception("Failed to there are songs registered today" + LocalDate.now());
 
             Document doc = Jsoup.connect("https://www.melon.com/chart/index.htm").get();
             Elements trElement = doc.select("div#tb_list table tbody tr");
+            SongService songService = (SongService) AopContext.currentProxy();
+
             for (Element tr : trElement) {
                 CompletableFuture.runAsync(() -> {
                     try {
-                        SongService songService = (SongService) AopContext.currentProxy();
                         songService.createSongByMelonChart(tr);
                     } catch (Exception e) {
                         throw new RuntimeException(e.getMessage());
@@ -68,13 +59,7 @@ public class SongServiceImpl implements SongService {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-//            log.warn("fixedProjectStatusModify error {}", e.getMessage(), e);
-            System.out.println("Fail getSongInfo => " + LocalDate.now());
-        } finally {
-//            if (lock) {
-//                RedisLockUtils.releaseLock(redisTemplate, NftConstants.MODIFY_START_PROJECT_LOCK);
-//            }
+            log.warn("fixedProjectStatusModify error {}", e.getMessage(), e);
         }
     }
 
@@ -107,7 +92,7 @@ public class SongServiceImpl implements SongService {
 
             return song;
         } catch (Exception e) {
-            throw new RuntimeException("Failed createSong");
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -132,7 +117,7 @@ public class SongServiceImpl implements SongService {
                 throw new RuntimeException("Failed to insert song detail | melonId:" + songDetail.getMelonId());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed createSongDetail");
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -152,7 +137,7 @@ public class SongServiceImpl implements SongService {
                 throw new RuntimeException("Failed to insert song lyrics | melonId:" + song.getMelonId());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed createSongLyrics");
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

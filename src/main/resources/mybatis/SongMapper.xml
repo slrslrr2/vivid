@@ -16,8 +16,8 @@
     </insert>
 
     <insert id="insertSongDetail" parameterType="com.vivid.dream.model.SongDetailVo">
-        INSERT INTO tb_song_detail (melon_id, album_name, image_url, image_thumb_url, release_date, genre, create_date)
-        VALUES (#{melonId}, #{albumName}, #{imageUrl}, #{imageThumbUrl}, #{releaseDate}, #{genre}, NOW())
+        INSERT INTO tb_song_detail (melon_id, album_name, img_url, release_date, genre, create_date)
+        VALUES (#{melonId}, #{albumName}, #{imgUrl}, #{releaseDate}, #{genre}, NOW())
     </insert>
 
     <insert id="insertSongLyrics" parameterType="com.vivid.dream.model.SongLyricsVo">
