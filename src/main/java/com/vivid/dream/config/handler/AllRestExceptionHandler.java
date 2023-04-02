@@ -34,7 +34,7 @@ public class AllRestExceptionHandler {
         }
         String message = strBuilder.toString();
 
-        return getExceptionResponseEntity(message, request, HttpStatus.INTERNAL_SERVER_ERROR);
+        return getExceptionResponseEntity(message, request, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
