@@ -6,7 +6,6 @@ import com.vivid.dream.model.SongVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +14,7 @@ import java.util.Optional;
 public interface SongMapper {
     Optional<SongVo> selectSong(Long melonId);
 
-    List<SongVo> selectSongList();
+    List<SongVo> selectSongList(String date);
 
     int insertSong(SongVo song);
 

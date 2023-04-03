@@ -6,8 +6,8 @@
         SELECT * FROM tb_song WHERE melon_id = #{melonId}
     </select>
 
-    <select id="selectSongList" resultType="com.vivid.dream.model.SongVo">
-        SELECT * FROM tb_song WHERE DATE(create_date) = CURDATE();
+    <select id="selectSongList" parameterType="String" resultType="com.vivid.dream.model.SongVo">
+        SELECT * FROM tb_song WHERE DATE(create_date) = #{date}
     </select>
 
     <insert id="insertSong" parameterType="com.vivid.dream.model.SongVo">

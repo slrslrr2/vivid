@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,8 +34,8 @@ public class SongServiceImpl implements SongService {
     @Resource(name = "songTaskExecutor")
     private TaskExecutor songTaskExecutor;
 
-    //    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "1 * * * * ?")
+        @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(cron = "1 * * * * ?")
     public void crawlingMelonChart(){
         try {
             Integer nowDateCountBySong = songMapper.selectNowDataCount().orElse(0);
@@ -70,6 +71,11 @@ public class SongServiceImpl implements SongService {
         SongVo song = createSong(tr);
         createSongDetail(song.getMelonId());
         createSongLyrics(song);
+    }
+
+    @Override
+    public List<SongVo> getSongList(String date) {
+        return songMapper.selectSongList(date);
     }
 
     private SongVo createSong(Element tr){
