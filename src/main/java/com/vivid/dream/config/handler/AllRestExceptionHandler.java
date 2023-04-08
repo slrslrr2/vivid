@@ -5,7 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,12 +17,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 
-@Slf4j
+//@Slf4j
 @RestControllerAdvice
 public class AllRestExceptionHandler {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
     @ExceptionHandler(WebException.class)
     public ResponseEntity<ExceptionDetailResponseDTO> handleException(WebException e, HttpServletRequest request, HttpServletRequest response) {
-        log.error("### WebException:{} ###", e.getMessage());
+        logger.error("### WebException:{} ###", e.getMessage());
         return getExceptionResponseEntity(e.getResultCode().getDesc(), request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -44,9 +47,9 @@ public class AllRestExceptionHandler {
         return getExceptionResponseEntity(message, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private static final String ERROR_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-    public static ResponseEntity<ExceptionDetailResponseDTO> getExceptionResponseEntity(String message, HttpServletRequest request, HttpStatus httpStatus) {
-        log.error(message);
+    private final String ERROR_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    public ResponseEntity<ExceptionDetailResponseDTO> getExceptionResponseEntity(String message, HttpServletRequest request, HttpStatus httpStatus) {
+        logger.error(message);
         ExceptionDetailResponseDTO responseDTO = ExceptionDetailResponseDTO.builder()
                 .time(LocalDateTime.now().format(DateTimeFormatter.ofPattern(ERROR_DATE_FORMAT)))
                 .status(httpStatus.value())
