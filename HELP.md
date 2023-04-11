@@ -1,3 +1,13 @@
+# 배포
+
+```
+// 1. 도커 이미지 빌드
+docker build -t dream:0.0.1 .
+
+// 2. Docker Container 실행
+docker run -d -p 8080:8080 dream:0.0.1
+```
+
 # 테이블 정의서
 
 ### Table definition
