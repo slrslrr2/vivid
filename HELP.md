@@ -10,6 +10,16 @@ docker run -d -p 8080:8080 dream:0.0.1
 // 3. 
 ```
 
+```
+로컬 PC에서 개발을 한 후 Github에 Push를 합니다.
+Github Repository 특정 branch에 push가 되면 Github Action이 동작을 시작합니다.
+Github Actions가 Github Container Registry에 소스를 받은 후 Docker 이미지로 빌드를 합니다.
+빌드된 이미지를 EC2에 등록된 Runner가 복사합니다.
+기존 이미지를 삭제하고 새로운 이미지로 실행을 합니다.
+
+https://codegear.tistory.com/84 참조
+```
+
 # 테이블 정의서
 
 ### Table definition
