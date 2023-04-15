@@ -2,7 +2,6 @@ FROM openjdk:17 AS builder
 RUN chmod +X ./gradlew
 RUN ./gradlew bootJar
 
-FROM adoptopenjdk:17-jdk-hotspot
 COPY --from=builder build/libs/*.jar app.jar
 
 EXPOSE 8080
