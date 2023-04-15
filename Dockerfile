@@ -2,8 +2,7 @@ FROM openjdk:17
 WORKDIR /app/dream/
 RUN mkdir -p /app/dream && \
     mkdir -p /app/logs && \
-    ln -s /app/logs/ /app/dream/logs \
- \
+    ln -s /app/logs/ /app/dream/logs
 
 COPY --chown=gradle:gradle build/libs/dream.jar /app/dream/dream.jar
 
