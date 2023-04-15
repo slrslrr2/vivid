@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run echo contexts
-      - run: echo $DOCKER_IMAGE + ' ' + $VERSON + ' ' + $go_cicd + ${{ secrets.DREAM_TOKEN }}
+        run: echo $DOCKER_IMAGE + ' ' + $VERSON + ' ' + $go_cicd + ${{ secrets.DREAM_TOKEN }}
 
       - name: Check out source code
         uses: actions/checkout@v2
