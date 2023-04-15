@@ -53,6 +53,14 @@ jobs:
           pwd
           ls -al
 
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Run ls -al
+        run: |
+          pwd
+          ls -al
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
