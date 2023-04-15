@@ -54,7 +54,7 @@ jobs:
           ls -al
 
       - name: Build with Gradle
-        run: ./gradlew bootJar
+        run: ./gradlew clean bootJar
 
       - name: Run ls -al
         run: |
