@@ -4,7 +4,7 @@ RUN mkdir -p /app/dream && \
     mkdir -p /app/logs && \
     ln -s /app/logs/ /app/dream/logs
 
-COPY logs/dream-logback.log aa.log
+COPY ./* /app/dream
 
 #COPY build/libs/dream.jar dream.jar
 
