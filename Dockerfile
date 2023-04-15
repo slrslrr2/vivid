@@ -1,4 +1,4 @@
-FROM adoptopenjdk:17-jdk-hotspot AS builder
+FROM openjdk:17 AS builder
 RUN chmod +X ./gradlew
 RUN ./gradlew bootJar
 
