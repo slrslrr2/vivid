@@ -4,7 +4,9 @@ RUN mkdir -p /app/dream && \
     mkdir -p /app/logs && \
     ln -s /app/logs/ /app/dream/logs
 
-RUN cd src/main/java
+RUN cat logs/dream-logback.log
+RUN cat asdfasdfasd.zz
+
 COPY build/libs/dream.jar /app/dream/dream.jar
 
 EXPOSE 8080
