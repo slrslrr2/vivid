@@ -48,6 +48,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.DREAM_TOKEN }}
 
+      - name: Run ls -al
+        run: |
+          pwd
+          ls -al
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
