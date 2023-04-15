@@ -11,7 +11,7 @@ RUN mkdir -p /app/dream && \
 RUN pwd
 RUN ls -al
 
-COPY build/libs/dream.jar /app/dream/dream.jar
+COPY ./build/libs/dream.jar /app/dream/dream.jar
 WORKDIR /app/dream/
 
 RUN pwd
