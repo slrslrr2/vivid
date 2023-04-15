@@ -4,8 +4,7 @@ RUN mkdir -p /app/dream && \
     mkdir -p /app/logs && \
     ln -s /app/logs/ /app/dream/logs
 
-RUN cat logs/dream-logback.log
-RUN cat asdfasdfasd.zz
+COPY logs/dream-logback.log aa.log
 
 COPY build/libs/dream.jar /app/dream/dream.jar
 
