@@ -7,7 +7,5 @@ RUN mkdir -p /app/dream && \
 COPY logs/dream-logback.log aa.log
 COPY build/libs/dream.jar dream.jar
 
-COPY build/libs/dream.jar /app/dream/dream.jar
-
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/dream/dream.jar"]
+ENTRYPOINT ["java", "-jar", "dream.jar"]
