@@ -2,12 +2,12 @@
 FROM openjdk:17 AS builder
 WORKDIR /app
 COPY . .
-RUN chmod +X ./gradlew
+RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
-RUN mv build/libs/app.jar /app.jar
+RUN mv build/libs/dream.jar /dream.jar
 
 # run stage
 FROM openjdk:17
-COPY --from=builder /app.jar /app.jar
+COPY --from=builder /dream.jar /dream.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/dream.jar"]
