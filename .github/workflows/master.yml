@@ -14,9 +14,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Run echo contexts
-        run: echo $DOCKER_IMAGE + ' ' + $VERSON + ' ' + $go_cicd + ${{ secrets.DREAM_TOKEN }}
-
       - name: Check out source code
         uses: actions/checkout@v2
 
@@ -53,28 +50,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.DREAM_TOKEN }}
-#
-#      - name: Run ls -al
-#        run: |
-#          pwd
-#          ls -al
-#
-#      - name: Build with Gradle
-#        run: ./gradlew clean bootJar
-
-      - name: Run ls -al
-        run: |
-          pwd
-          ls -al
-          find . -name "*.jar"
 
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          builder: ${{ steps.buildx.outputs.name }}
+#          builder: ${{ steps.buildx.outputs.name }}
+          context: .
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
+
+      - name: env echo
+        run: |
+          echo ${{ env.DOCKER_IMAGE }}
 
   deploy:
     needs: build
