@@ -51,6 +51,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.DREAM_TOKEN }}
 
+      - name: Build with Gradle
+        run: ./gradlew clean bootJar
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
