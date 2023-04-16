@@ -4,7 +4,7 @@ COPY . .
 RUN chmod +X ./gradlew
 RUN ./gradlew bootJar
 
-FROM openjdk:17
+FROM openjdk:17 AS builder
 COPY --from=builder build/libs/*.jar dream.jar
 
 EXPOSE 8080
