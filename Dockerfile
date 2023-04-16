@@ -1,14 +1,9 @@
 FROM openjdk:17
+WORKDIR /app/dream/
+RUN mkdir -p /app/dream && \
+    mkdir -p /app/logs && \
+    ln -s /app/logs/ /app/dream/logs
+COPY build/libs/dream.jar /app/dream/dream.jar
 
-WORKDIR /app
-
-COPY . .
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends findutils && \
-    chmod +x ./gradlew && \
-    ./gradlew bootJar
-
-RUN mv build/libs/dream.jar /dream.jar
-
-CMD ["java", "-jar", "/dream.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/dream/dream.jar"]
