@@ -1,13 +1,14 @@
-# builder stage
-FROM openjdk:17 AS builder
+FROM openjdk:17
+
 WORKDIR /app
+
 COPY . .
-RUN chmod +x ./gradlew
-RUN ./gradlew bootJar
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends findutils && \
+    chmod +x ./gradlew && \
+    ./gradlew bootJar
+
 RUN mv build/libs/dream.jar /dream.jar
 
-# run stage
-FROM openjdk:17
-COPY --from=builder /dream.jar /dream.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/dream.jar"]
+CMD ["java", "-jar", "/dream.jar"]
