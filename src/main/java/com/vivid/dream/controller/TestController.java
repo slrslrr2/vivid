@@ -20,9 +20,6 @@ import java.util.List;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 public class TestController {
-    @Value("${spring.spring.jdbc-url}")
-    String jdbcUrl2;
-
     @Value("${spring.elasticsearch.host}")
     String elasticsearchHost;
 
@@ -48,6 +45,6 @@ public class TestController {
 
     @GetMapping("/properties")
     public void propertiesList(){
-        log.info("변수가 찍히고 있다 TEST : =>  {} {} ", jdbcUrl2, elasticsearchHost);
+        log.info("변수가 찍히고 있다 TEST : =>  {} ", elasticsearchHost);
     }
 }
