@@ -98,7 +98,7 @@ jobs:
           pwd
           cat ./src/main/resources/application.yml
           cd ./src/main/resources/
-          ls
+          ls -al
           whoami
 
   deploy:
