@@ -23,18 +23,37 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: ls -al
+        run: |
+          ls -al
+
       - name: make application.yml
         run: |
+          mkdir ./src/main/resources
           touch ./src/main/resources/application.yml
           echo "${{secrets.APPLICATION}}" > ./src/main/resources/application.yml
+          pwd
+
       - uses: actions/upload-artifact@v2
         with:
           name: application.yml
           path: ./src/main/resources/application.yml
 
+      - name: ls -al2
+        run: |
+          echo ./src/main/resources/application.yml
+          ls -al
+          pwd
+
       - name: Set up docker buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+
+      - name: ls -al3
+        run: |
+          echo ./src/main/resources/application.yml
+          ls -al
+          pwd
 
       - name: Cache docker layers
         uses: actions/cache@v2
