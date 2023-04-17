@@ -97,6 +97,9 @@ jobs:
           ls -al
           pwd
           cat ./src/main/resources/application.yml
+          cd ./src/main/resources/
+          ls
+          whoami
 
   deploy:
     needs: build
