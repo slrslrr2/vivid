@@ -40,7 +40,7 @@ jobs:
 
       - name: ls -al2
         run: |
-          echo ./src/main/resources/application.yml
+          cat ./src/main/resources/application.yml
           ls -al
           pwd
 
@@ -50,7 +50,7 @@ jobs:
 
       - name: ls -al3
         run: |
-          echo ./src/main/resources/application.yml
+          cat ./src/main/resources/application.yml
           ls -al
           pwd
 
