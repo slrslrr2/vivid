@@ -92,9 +92,11 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
 
-      - name: env echo
+      - name: ls -al5
         run: |
-          echo ${{ env.DOCKER_IMAGE }}
+          ls -al
+          pwd
+          cat ./src/main/resources/application.yml
 
   deploy:
     needs: build
