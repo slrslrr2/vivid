@@ -69,8 +69,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.DREAM_TOKEN }}
 
+      - name: ls -al4
+        run: |
+          cat ./src/main/resources/application.yml
+          ls -al
+          pwd
+
       - name: Build with Gradle
         run: ./gradlew clean bootJar
+
+      - name: ls -al5
+        run: |
+          cat ./src/main/resources/application.yml
+          ls -al
+          pwd
 
       - name: Build and push
         id: docker_build
