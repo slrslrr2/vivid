@@ -1,8 +1,6 @@
 package com.vivid.dream.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.vivid.dream.config.handler.ResultCode;
-import com.vivid.dream.config.handler.exception.WebException;
 import com.vivid.dream.model.SongVo;
 import com.vivid.dream.service.SongService;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +35,6 @@ public class TestController {
 
     @GetMapping("/list")
     public List<SongVo> getSongList(String date){
-        if("2022-04-03".equals(date)){
-            throw new WebException(ResultCode.ERR_REQUEST_PARAMETER);
-        }
         return songService.getSongList(date);
     }
 

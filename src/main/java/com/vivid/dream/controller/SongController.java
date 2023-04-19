@@ -19,7 +19,7 @@ public class SongController {
     private final SongService songService;
 
     @GetMapping("/list")
-    public List<SongVo> getSongList(@RequestParam(required = true) String date){
+    public List<SongVo> getSongList(@RequestParam String date){
         log.trace("Trace");
         log.debug("Debug");
         log.info("Info");

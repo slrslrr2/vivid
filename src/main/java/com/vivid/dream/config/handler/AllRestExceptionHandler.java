@@ -25,7 +25,7 @@ public class AllRestExceptionHandler {
     @ExceptionHandler(WebException.class)
     public ResponseEntity<ExceptionDetailResponseDTO> handleException(WebException e, HttpServletRequest request, HttpServletRequest response) {
         logger.error("### WebException:{} ###", e.getMessage());
-        return getExceptionResponseEntity(e.getResultCode().getDesc(), request, HttpStatus.INTERNAL_SERVER_ERROR);
+        return getExceptionResponseEntity(e.getResultCode().getDesc(), request, e.getHttpStatus());
     }
 
     @ExceptionHandler({ConstraintViolationException.class})

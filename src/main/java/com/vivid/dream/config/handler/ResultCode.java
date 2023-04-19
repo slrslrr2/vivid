@@ -5,12 +5,12 @@ public enum ResultCode {
     ERROR(1, "Error"),
     ERR_REQUEST_PARAMETER(2, "Request Parameter Error"),
     BAD_REQUEST(4, "Bad Request"),
-    TODAY_SONG_TOP100_IS_EXIST(1001,  "The song top 100 is already existed."),;
-
+    TODAY_SONG_TOP100_IS_EXIST(1001,  "The song top 100 is already existed."),
+    UNKNOWN_SEARCH(9999, "An unknown error occurred while searching. Please contact the administrator."),;
     private Integer code;
     private String desc;
 
-    private ResultCode(Integer code, String desc) {
+    ResultCode(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
