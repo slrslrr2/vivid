@@ -2,6 +2,7 @@ package com.vivid.dream.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.vivid.dream.model.SongVo;
+import com.vivid.dream.mq.RabbitmqProducer;
 import com.vivid.dream.service.SongService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class TestController {
 
     private final ElasticsearchClient elasticsearchClient;
     private final SongService songService;
+    private final RabbitmqProducer rabbitmqProducer;
 
     @GetMapping("/elastic/test")
     public void elasticTest() throws IOException {
@@ -41,5 +43,10 @@ public class TestController {
     @GetMapping("/properties")
     public void propertiesList(){
         log.info("변수가 찍히고 있다 TEST : =>  {} ", elasticsearchHost);
+    }
+
+    @GetMapping("/rabbitMq")
+    public void sendRabbitmq(){
+        rabbitmqProducer.sendMessage(1, "{value: value, value2: value2}");
     }
 }
