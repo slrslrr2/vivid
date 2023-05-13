@@ -1,11 +1,14 @@
 package com.vivid.dream.service;
 
-import org.elasticsearch.client.Response;
+import com.vivid.dream.model.PopularSearchWordVo;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface SearchService {
     String getLastIndexName(String name) throws IOException;
 
     String getSongInfoSearch(String keyword);
+
+    List<PopularSearchWordVo> getPopularSearchWord() throws Exception;
 }

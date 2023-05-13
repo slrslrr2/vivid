@@ -1,5 +1,12 @@
 package com.vivid.dream.service.impl;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.aggregations.AggregateVariant;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import com.vivid.dream.model.PopularSearchWordVo;
 import com.vivid.dream.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.client.Request;
@@ -11,6 +18,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchServiceImpl implements SearchService {
     private final RestClient restClient;
+    private final ElasticsearchClient esClient;
 
     @Override
     public String getLastIndexName(String name) throws IOException {
@@ -43,4 +54,31 @@ public class SearchServiceImpl implements SearchService {
         return "";
     }
 
+    @Override
+    public List<PopularSearchWordVo> getPopularSearchWord() throws Exception {
+        LocalDateTime beforeDay30 = LocalDateTime.now().minusDays(30);
+        // TODO: 일자 체크, 값이 없는경우도 확인
+
+        SearchRequest searchRequest = new SearchRequest.Builder()
+                .index("nginx-*")
+                .size(0)
+                .aggregations("params_searchWord", a -> a
+                        .terms(
+                                t -> t.field("params.searchWord.keyword")
+                                .size(10)
+                        ))
+                .build();
+
+        SearchResponse<HashMap> searchResponse = esClient.search(searchRequest, HashMap.class);
+        AggregateVariant agg = searchResponse.aggregations().get("params_searchWord")._get();
+        List<StringTermsBucket> buckets = ((StringTermsAggregate) agg).buckets().array();
+
+        List<PopularSearchWordVo> populars = new ArrayList<>();
+        for (StringTermsBucket bucket : buckets) {
+            populars.add(PopularSearchWordVo.builder()
+                    .docCount(bucket.docCount())
+                    .key(bucket.key()).build());
+        }
+        return populars;
+    }
 }

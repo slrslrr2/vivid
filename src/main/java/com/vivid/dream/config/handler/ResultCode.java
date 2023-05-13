@@ -6,6 +6,7 @@ public enum ResultCode {
     ERR_REQUEST_PARAMETER(2, "Request Parameter Error"),
     BAD_REQUEST(4, "Bad Request"),
     TODAY_SONG_TOP100_IS_EXIST(1001,  "The song top 100 is already existed."),
+    GET_POPULAR_SEARCH_WORD_EXCEPTION(1002,  "An error occurred while bringing popular searches."),
     UNKNOWN_SEARCH(9999, "An unknown error occurred while searching. Please contact the administrator."),;
     private Integer code;
     private String desc;
