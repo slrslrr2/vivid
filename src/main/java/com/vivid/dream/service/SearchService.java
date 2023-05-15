@@ -10,5 +10,5 @@ public interface SearchService {
 
     String getSongInfoSearch(String keyword);
 
-    List<PopularSearchWordVo> getPopularSearchWord() throws Exception;
+    List<PopularSearchWordVo> getPopularSearchWords() throws Exception;
 }

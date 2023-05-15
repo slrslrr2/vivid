@@ -4,8 +4,10 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.AggregateVariant;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.json.JsonData;
 import com.vivid.dream.model.PopularSearchWordVo;
 import com.vivid.dream.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -55,19 +57,20 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<PopularSearchWordVo> getPopularSearchWord() throws Exception {
-        LocalDateTime beforeDay30 = LocalDateTime.now().minusDays(30);
-        // TODO: 일자 체크, 값이 없는경우도 확인
+    public List<PopularSearchWordVo> getPopularSearchWords() throws Exception {
+        RangeQuery dateRange = getRangeQuery("received_at", LocalDateTime.now().minusDays(30).toString(), LocalDateTime.now().toString());
 
         SearchRequest searchRequest = new SearchRequest.Builder()
-                .index("nginx-*")
-                .size(0)
-                .aggregations("params_searchWord", a -> a
-                        .terms(
-                                t -> t.field("params.searchWord.keyword")
-                                .size(10)
-                        ))
-                .build();
+            .index("nginx-*")
+            .query(q -> q
+                .range(dateRange))
+            .size(0)
+            .aggregations("params_searchWord", a -> a
+                .terms(
+                    t -> t.field("params.searchWord.keyword")
+                    .size(10)
+                ))
+            .build();
 
         SearchResponse<HashMap> searchResponse = esClient.search(searchRequest, HashMap.class);
         AggregateVariant agg = searchResponse.aggregations().get("params_searchWord")._get();
@@ -76,9 +79,18 @@ public class SearchServiceImpl implements SearchService {
         List<PopularSearchWordVo> populars = new ArrayList<>();
         for (StringTermsBucket bucket : buckets) {
             populars.add(PopularSearchWordVo.builder()
-                    .docCount(bucket.docCount())
-                    .key(bucket.key()).build());
+                .docCount(bucket.docCount())
+                .key(bucket.key()).build());
         }
         return populars;
+    }
+
+    private RangeQuery getRangeQuery(String fieldRange, String gte, String lte) {
+        RangeQuery dateRange = RangeQuery.of(r -> r
+                .field(fieldRange)
+                .gte(JsonData.of(gte))
+                .lte(JsonData.of(lte))
+        );
+        return dateRange;
     }
 }

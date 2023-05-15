@@ -37,15 +37,15 @@ public class SearchController {
         return null;
     }
 
-    @GetMapping("/popular/search/word")
-    public ResponseEntity getPopularSearchWord(HttpServletRequest request){
-        List<PopularSearchWordVo> popularSearchWord;
+    @GetMapping("/popular/search/word/list")
+    public ResponseEntity getPopularSearchWords(HttpServletRequest request){
+        List<PopularSearchWordVo> popularSearchWords;
         try {
-            popularSearchWord = searchService.getPopularSearchWord();
-        }catch (Exception e){
+            popularSearchWords = searchService.getPopularSearchWords();
+        } catch (Exception e) {
             throw new WebException(ResultCode.GET_POPULAR_SEARCH_WORD_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity(popularSearchWord, HttpStatus.OK);
+        return new ResponseEntity(popularSearchWords, HttpStatus.OK);
     }
 }
