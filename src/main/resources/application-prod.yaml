@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: prod
+  database:
+    jdbc-url: jdbc:mysql://172.17.0.2:3030/vivid?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username:
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+
+  elasticsearch:
+    host: 172.17.0.5
+    port : 9200
+    username:
+    password:

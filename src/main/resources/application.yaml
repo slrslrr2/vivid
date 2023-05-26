@@ -1,0 +1,35 @@
+server:
+  port: 7777
+    
+spring:
+  profiles:
+    active: dev
+  database:
+    jdbc-url: jdbc:mysql://127.0.0.1:3306/vivid?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username:
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+
+  elasticsearch:
+    host: 127.0.0.1
+    port : 9200
+    username:
+    password:
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
+
+
+#  data:
+#    redis:
+#      timeout: 10s
+#      host: 127.0.0.1
+#      port: 6379
+##      password:
