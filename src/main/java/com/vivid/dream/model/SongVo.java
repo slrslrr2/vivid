@@ -13,6 +13,6 @@ public class SongVo {
     private Long melonId;
     private String songName;
     private String artist;
-    private Integer rank;
+    private Integer ranking;
     private Date createDate;
 }

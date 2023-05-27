@@ -11,8 +11,8 @@
     </select>
 
     <insert id="insertSong" parameterType="com.vivid.dream.model.SongVo">
-        INSERT INTO tb_song (melon_id, song_name, artist, rank, create_date)
-        VALUES (#{melonId}, #{songName}, #{artist}, #{rank}, NOW())
+        INSERT INTO tb_song (melon_id, song_name, artist, ranking, create_date)
+        VALUES (#{melonId}, #{songName}, #{artist}, #{ranking}, NOW())
     </insert>
 
     <select id="selectSongDetail" parameterType="java.lang.Long" resultType="com.vivid.dream.model.SongDetailVo">

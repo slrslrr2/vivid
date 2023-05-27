@@ -4,9 +4,12 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.AggregateVariant;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Highlight;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.json.JsonData;
 import com.vivid.dream.model.PopularSearchWordVo;
 import com.vivid.dream.service.SearchService;
@@ -52,8 +55,59 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public String getSongInfoSearch(String keyword) {
+    public String getSongInfoSearch(String keyword) throws IOException {
+        String indexName = getLastIndexName("song_info");
+
+        Highlight highlight = getHighlight(keyword);
+
+        SearchRequest searchRequest = new SearchRequest.Builder()
+                .index(indexName)
+                .highlight(highlight)
+                .build();
+
+        SearchResponse<HashMap> searchResponse = esClient.search(searchRequest, HashMap.class);
+
         return "";
+    }
+
+    private Highlight getHighlight(String keyword) {
+        HashMap<String, HighlightField> hashMap = new HashMap<>();
+        hashMap.put("artist", new HighlightField.Builder().build());
+        hashMap.put("song_name", new HighlightField.Builder().build());
+        hashMap.put("lyrics", new HighlightField.Builder().build());
+
+        Highlight highlight = Highlight.of(h -> h
+                .fragmentSize(150)
+                .numberOfFragments(10)
+                .preTags("<b>")
+                .postTags("</b>")
+                .highlightQuery( q -> q
+                    .bool(b -> b
+                        .should(s -> s.match(byArtist(keyword)))
+                        .should(s -> s.match(bySongName(keyword)))
+                        .should(s -> s.match(byLyrics(keyword))))
+                )
+                .fields( hashMap )
+        );
+        return highlight;
+    }
+
+    private MatchQuery byArtist(String keyword) {
+        return MatchQuery.of( m -> m.field("artist")
+                .query(keyword)
+                .boost(3.0F));
+    }
+
+    private MatchQuery bySongName(String keyword) {
+        return MatchQuery.of( m -> m.field("song_name")
+                .query(keyword)
+                .boost(2.0F));
+    }
+
+    private MatchQuery byLyrics(String keyword) {
+        return MatchQuery.of( m -> m.field("lyrics")
+                .query(keyword)
+                .boost(1.0F));
     }
 
     @Override

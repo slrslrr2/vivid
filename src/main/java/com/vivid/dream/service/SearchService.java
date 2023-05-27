@@ -8,7 +8,7 @@ import java.util.List;
 public interface SearchService {
     String getLastIndexName(String name) throws IOException;
 
-    String getSongInfoSearch(String keyword);
+    String getSongInfoSearch(String keyword) throws IOException;
 
     List<PopularSearchWordVo> getPopularSearchWords() throws Exception;
 }

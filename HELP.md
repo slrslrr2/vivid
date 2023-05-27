@@ -1,3 +1,9 @@
+# INFO
+- **BACKEND**
+  - PORT: 7777
+- **FRONTEND**
+  - PORT: 7776
+
 # 배포
 
 ```
@@ -30,9 +36,9 @@ CREATE TABLE `tb_song` (
   `melon_id` bigint(20) DEFAULT 0 COMMENT 'melon id',
   `song_name` varchar(200) NOT NULL COMMENT '노래제목',
   `artist` varchar(100) NOT NULL COMMENT '아티스트',
-  `rank` int(4) DEFAULT NULL COMMENT '순위',
+  `ranking` int(4) DEFAULT NULL COMMENT '순위',
   `create_date` date NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 

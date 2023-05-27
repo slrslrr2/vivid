@@ -82,7 +82,7 @@ public class SongServiceImpl implements SongService {
         SongVo song = null;
         try {
             Long melonId = Long.parseLong(tr.attr("data-song-no"));
-            Integer rank = Integer.parseInt(tr.select("span.rank").first().text());
+            Integer ranking = Integer.parseInt(tr.select("span.rank").first().text());
             String songName = tr.select("div.wrap_song_info .rank01 a").text();
             String artist = tr.select("div.wrap_song_info .rank02 .checkEllipsis a").text();
 
@@ -90,7 +90,7 @@ public class SongServiceImpl implements SongService {
                     .melonId(melonId)
                     .songName(songName)
                     .artist(artist)
-                    .rank(rank)
+                    .ranking(ranking)
                     .build();
 
             int result = songMapper.insertSong(song);

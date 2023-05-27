@@ -8,10 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,16 +18,12 @@ import java.util.List;
 public class SearchController {
     final private SearchService searchService;
 
-    @GetMapping("/song/info")
-    public ResponseEntity<?> getSongInfo(@RequestParam String searchWord){
+    @GetMapping("/song/info/{searchWord}")
+    public ResponseEntity<?> getSongInfo(@PathVariable String searchWord){
         try{
-            if (!"".equals(searchWord)) {
-                System.out.println("keyword: "+ searchWord);
-                return null;
-            }
             // TODO: search queryDSL
-            String indexName = searchService.getLastIndexName("song_info");
-            System.out.println(indexName);
+
+            searchService.getSongInfoSearch(searchWord);
         }catch (Exception e){
             throw new WebException(ResultCode.UNKNOWN_SEARCH, HttpStatus.INTERNAL_SERVER_ERROR);
         }
