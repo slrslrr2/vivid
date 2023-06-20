@@ -1,6 +1,6 @@
 package com.vivid.dream.service;
 
-import com.vivid.dream.model.SongVo;
+import com.vivid.dream.entity.SongVo;
 import org.jsoup.nodes.Element;
 
 import java.util.List;

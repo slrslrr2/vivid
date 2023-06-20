@@ -1,6 +1,6 @@
 package com.vivid.dream.controller;
 
-import com.vivid.dream.model.SongVo;
+import com.vivid.dream.entity.SongVo;
 import com.vivid.dream.service.SongService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +20,6 @@ public class SongController {
 
     @GetMapping("/list")
     public List<SongVo> getSongList(@RequestParam String date){
-        log.trace("Trace");
-        log.debug("Debug");
-        log.info("Info");
-        log.warn("Warn");
-        log.error("Error");
         return songService.getSongList(date);
     }
 }

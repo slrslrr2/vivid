@@ -1,4 +1,4 @@
-package com.vivid.dream.model;
+package com.vivid.dream.entity;
 
 import lombok.Getter;
 import lombok.Setter;

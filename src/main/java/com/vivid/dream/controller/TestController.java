@@ -1,7 +1,7 @@
 package com.vivid.dream.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.vivid.dream.model.SongVo;
+import com.vivid.dream.entity.SongVo;
 import com.vivid.dream.mq.RabbitmqProducer;
 import com.vivid.dream.service.SongService;
 import lombok.RequiredArgsConstructor;

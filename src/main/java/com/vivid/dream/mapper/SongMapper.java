@@ -1,8 +1,8 @@
 package com.vivid.dream.mapper;
 
-import com.vivid.dream.model.SongDetailVo;
-import com.vivid.dream.model.SongLyricsVo;
-import com.vivid.dream.model.SongVo;
+import com.vivid.dream.entity.SongDetailVo;
+import com.vivid.dream.entity.SongLyricsVo;
+import com.vivid.dream.entity.SongVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

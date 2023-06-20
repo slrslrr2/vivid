@@ -10,12 +10,6 @@ import java.util.concurrent.TimeUnit;
 public class RedisLockUtils {
     private static final long TRY_TIME = 100;
 
-    /***
-     * @param redisTemplate
-     * @param key
-     * @param lockExpireTime ms
-     * @return
-     */
     public static boolean tryLock(RedisTemplate redisTemplate, String key, long lockExpireTime) {
         try {
             long expireAt = System.currentTimeMillis() + lockExpireTime;
@@ -42,10 +36,6 @@ public class RedisLockUtils {
         return false;
     }
 
-    /***
-     * @param redisTemplate
-     * @param key
-     */
     public static void releaseLock(RedisTemplate redisTemplate, String key) {
         try {
             redisTemplate.delete(key);
