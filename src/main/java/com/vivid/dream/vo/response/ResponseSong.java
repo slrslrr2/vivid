@@ -1,14 +1,15 @@
-package com.vivid.dream.entity;
+package com.vivid.dream.vo.response;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Builder
 @Getter
 @Setter
-@ToString
-public class SongVo {
+public class ResponseSong {
     private Long id;
     private Long melonId;
     private String songName;

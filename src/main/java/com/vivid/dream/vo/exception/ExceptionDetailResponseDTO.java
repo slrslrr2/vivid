@@ -1,4 +1,4 @@
-package com.vivid.dream.config.handler;
+package com.vivid.dream.vo.exception;
 
 import lombok.Builder;
 import lombok.Getter;

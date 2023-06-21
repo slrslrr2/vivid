@@ -1,6 +1,6 @@
 package com.vivid.dream.service;
 
-import com.vivid.dream.entity.SongVo;
+import com.vivid.dream.vo.response.ResponseSong;
 import org.jsoup.nodes.Element;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 public interface SongService {
     void createSongByMelonChart(Element tr);
 
-    List<SongVo> getSongList(String date);
+    List<ResponseSong> getSongList(String date);
 }

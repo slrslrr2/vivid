@@ -1,21 +1,18 @@
 package com.vivid.dream.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
+@Builder
 @Getter
 @Setter
-@Builder
 @ToString
-public class SongLyricsVo {
+public class Song {
     private Long id;
     private Long melonId;
     private String songName;
     private String artist;
-    private String lyrics;
+    private Integer ranking;
     private Date createDate;
 }

@@ -1,9 +1,9 @@
 package com.vivid.dream.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.vivid.dream.entity.SongVo;
 import com.vivid.dream.mq.RabbitmqProducer;
 import com.vivid.dream.service.SongService;
+import com.vivid.dream.vo.response.ResponseSong;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +36,7 @@ public class TestController {
     }
 
     @GetMapping("/list")
-    public List<SongVo> getSongList(String date){
+    public List<ResponseSong> getSongList(String date){
         return songService.getSongList(date);
     }
 

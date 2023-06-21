@@ -1,4 +1,4 @@
-package com.vivid.dream.vo;
+package com.vivid.dream.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

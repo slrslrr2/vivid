@@ -21,18 +21,14 @@ public class RabbitmqListener {
     ))
     public void createProduct(String data, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag, Channel channel) {
         try{
-            log.warn("실행1 deliveryTag: {}, channel:{}, data: {} ", deliveryTag, channel, data);
             Thread.sleep(10 * 1000);
             channel.basicAck(deliveryTag, false);
-            log.warn("실행2 deliveryTag: {}, channel:{}, data: {} ", deliveryTag, channel, data);
         } catch (Exception e){
+            log.warn("RabbitmqListener Exception1 {}", e);
             try {
-                log.warn("실행3 deliveryTag: {}, channel:{}, data: {} ", deliveryTag, channel, data);
                 channel.basicNack(deliveryTag, false, true);
-                log.warn("실행4 deliveryTag: {}, channel:{}, data: {} ", deliveryTag, channel, data);
-
             } catch (Exception e2){
-                log.warn("실행5 RabbitmqListener Exception {}", e2);
+                log.warn("RabbitmqListener Exception2 {}", e2);
             }
         } finally {
 

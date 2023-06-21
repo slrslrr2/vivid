@@ -2,10 +2,10 @@ package com.vivid.dream.controller;
 
 import com.vivid.dream.config.handler.ResultCode;
 import com.vivid.dream.config.handler.exception.WebException;
-import com.vivid.dream.vo.ResponsePopularSearchWord;
+import com.vivid.dream.vo.response.ResponsePopularSearchWord;
 import com.vivid.dream.service.SearchService;
-import com.vivid.dream.vo.ResponseSongInfoSearch;
-import com.vivid.dream.vo.ResultList;
+import com.vivid.dream.vo.response.ResponseSongInfoSearch;
+import com.vivid.dream.vo.response.ResultList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

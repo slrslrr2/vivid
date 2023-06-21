@@ -1,7 +1,7 @@
 package com.vivid.dream.service;
 
-import com.vivid.dream.vo.ResponsePopularSearchWord;
-import com.vivid.dream.vo.ResponseSongInfoSearch;
+import com.vivid.dream.vo.response.ResponsePopularSearchWord;
+import com.vivid.dream.vo.response.ResponseSongInfoSearch;
 
 import java.io.IOException;
 import java.util.List;
