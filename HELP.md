@@ -67,7 +67,11 @@ CREATE TABLE `tb_song_lyrics` (
 ```
 
 ### Elasticsearch
-
+```
+관련 jdk Elasticsearch ssl 연결
+keytool -importcert -keystore ${JAVA_HOME}/jre/lib/security/cacerts -storepass changeit -file xxx.cer
+keytool -importcert -keystore /Library/Java/JavaVirtualMachines/jdk-11.0.14.jdk/Contents/Home/lib/security/cacerts -storepass changeit -file /Users/geumbit/sideproject/ELK/elasticsearch-8.2.2/config/certs/http_ca.crt -alias elastic
+```
 
 #### 1. Logstash
 

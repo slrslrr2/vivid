@@ -11,5 +11,5 @@ public interface SearchService {
 
     List<ResponseSongInfoSearch> getSongInfoSearch(String keyword) throws IOException;
 
-    List<ResponsePopularSearchWord> getPopularSearchWords() throws Exception;
+    List<ResponsePopularSearchWord> getPopularSearchWords(int beforeDays, int limit) throws Exception;
 }

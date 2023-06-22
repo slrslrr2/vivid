@@ -13,15 +13,14 @@ import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
-import com.vivid.dream.vo.response.ResponsePopularSearchWord;
 import com.vivid.dream.service.SearchService;
+import com.vivid.dream.vo.response.ResponsePopularSearchWord;
 import com.vivid.dream.vo.response.ResponseSongInfoSearch;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<ResponseSongInfoSearch> getSongInfoSearch(String keyword) throws IOException {
         String indexName = getLastIndexName("song_info");
-        Highlight highlight = getHighlight();
+        Highlight highlight = getHighlightQuery();
         Query query = getQuery(keyword);
 
         SearchRequest searchRequest = new SearchRequest.Builder()
@@ -77,8 +78,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<ResponsePopularSearchWord> getPopularSearchWords() throws Exception {
-        RangeQuery dateRange = getRangeQuery("received_at", LocalDateTime.now().minusDays(30).toString(), LocalDateTime.now().toString());
+    public List<ResponsePopularSearchWord> getPopularSearchWords(int beforeDays, int limit) throws Exception {
+        String gte = LocalDateTime.now().minusDays(beforeDays).toString();
+        RangeQuery dateRange = getRangeQuery("received_at", gte, LocalDateTime.now().toString());
 
         SearchRequest searchRequest = new SearchRequest.Builder()
                 .index("nginx-*")
@@ -87,7 +89,7 @@ public class SearchServiceImpl implements SearchService {
                 .aggregations("params_searchWord",
                     a -> a.terms(
                         t -> t.field("params.searchWord.keyword")
-                        .size(10)))
+                        .size(limit)))
                 .build();
 
         SearchResponse<HashMap> searchResponse = esClient.search(searchRequest, HashMap.class);
@@ -109,39 +111,42 @@ public class SearchServiceImpl implements SearchService {
         List<ResponseSongInfoSearch> results = new ArrayList<>();
         List<Hit<HashMap>> hits = searchResponse.hits().hits();
         for (Hit<HashMap> hit : hits) {
-            HashMap source = hit.source();
-
-            String songName = source.get("song_name").toString();
-            String artist = source.get("artist").toString();
-            String artistByHighlight = "";
-            String songNameByHighlight = "";
-            String lyricsByHighlight = "";
-
-            Map<String, List<String>> hitHighlight = hit.highlight();
-            for (String key : hitHighlight.keySet()) {
-                switch (key){
-                    case "artist":
-                        artistByHighlight = hitHighlight.get(key).toString(); break;
-                    case "song_name" :
-                        songNameByHighlight = hitHighlight.get(key).toString(); break;
-                    case "lyrics" :
-                        lyricsByHighlight = hitHighlight.get(key).toString(); break;
-                    default: break;
-                }
-            }
-
-            ResponseSongInfoSearch searchSongInfo = ResponseSongInfoSearch.builder()
-                    .songName(StringUtils.isEmpty(songName) ? "" : songName)
-                    .artist(StringUtils.isEmpty(artist) ? "" : artist)
-                    .artistByHighlight(artistByHighlight)
-                    .songNameByHighlight(songNameByHighlight)
-                    .lyricsByHighlight(lyricsByHighlight)
-                    .build();
-
-            results.add(searchSongInfo);
+            results.add(getResponseSongInfoSearch(hit));
         }
 
         return results;
+    }
+
+    private ResponseSongInfoSearch getResponseSongInfoSearch(Hit<HashMap> hit) {
+        HashMap source = hit.source();
+
+        String songName = source.get("song_name").toString();
+        String artist = source.get("artist").toString();
+        String artistByHighlight = "";
+        String songNameByHighlight = "";
+        String lyricsByHighlight = "";
+
+        Map<String, List<String>> hitHighlight = hit.highlight();
+        for (String key : hitHighlight.keySet()) {
+            switch (key){
+                case "artist":
+                    artistByHighlight = hitHighlight.get(key).toString(); break;
+                case "song_name" :
+                    songNameByHighlight = hitHighlight.get(key).toString(); break;
+                case "lyrics" :
+                    lyricsByHighlight = hitHighlight.get(key).toString(); break;
+                default: break;
+            }
+        }
+
+        ResponseSongInfoSearch searchSongInfo = ResponseSongInfoSearch.builder()
+                .songName(defaultString(songName, ""))
+                .artist(defaultString(artist, ""))
+                .artistByHighlight(artistByHighlight)
+                .songNameByHighlight(songNameByHighlight)
+                .lyricsByHighlight(lyricsByHighlight)
+                .build();
+        return searchSongInfo;
     }
 
     private Query getQuery(String keyword) {
@@ -176,7 +181,7 @@ public class SearchServiceImpl implements SearchService {
         return queries;
     }
 
-    private Highlight getHighlight() {
+    private Highlight getHighlightQuery() {
         HashMap<String, HighlightField> hashMap = new HashMap<>();
         hashMap.put("artist", new HighlightField.Builder().build());
         hashMap.put("song_name", new HighlightField.Builder().build());

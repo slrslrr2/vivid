@@ -1,13 +1,15 @@
 package com.vivid.dream.vo.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Builder
 @Getter
 @ToString
-public class ResponseSongInfoSearch {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResponseSongInfoSearch implements Serializable {
     private String songName;
     private String artist;
 

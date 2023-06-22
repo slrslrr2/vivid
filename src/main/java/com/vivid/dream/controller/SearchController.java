@@ -5,14 +5,11 @@ import com.vivid.dream.config.handler.exception.WebException;
 import com.vivid.dream.vo.response.ResponsePopularSearchWord;
 import com.vivid.dream.service.SearchService;
 import com.vivid.dream.vo.response.ResponseSongInfoSearch;
-import com.vivid.dream.vo.response.ResultList;
+import com.vivid.dream.vo.ResultList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,10 +31,11 @@ public class SearchController {
     }
     
     @GetMapping("/popular/search/word/list")
-    public ResponseEntity<?> getPopularSearchWords(){
+    public ResponseEntity<?> getPopularSearchWords(@RequestParam(defaultValue = "30") int beforeDays,
+                                                @RequestParam(defaultValue = "10") int limit){
         List<ResponsePopularSearchWord> popularSearchWords;
         try {
-            popularSearchWords = searchService.getPopularSearchWords();
+            popularSearchWords = searchService.getPopularSearchWords(beforeDays, limit);
         } catch (Exception e) {
             throw new WebException(ResultCode.GET_POPULAR_SEARCH_WORD_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
