@@ -1,21 +1,34 @@
 package com.vivid.dream.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Entity
+@Table(name = "tb_song_lyrics")
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@ToString
 public class SongLyrics {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long melonId;
+
+    @Column(nullable = false)
     private String songName;
+
+    @Column(nullable = false)
     private String artist;
+
+    @Lob
+    @Column(nullable = false)
     private String lyrics;
-    private Date createDate;
+
+    @Column(nullable = false)
+    private LocalDateTime createDate;
 }

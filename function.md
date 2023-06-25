@@ -1,9 +1,28 @@
+## 이벤트 쿠폰 발급 프로세스
+
+동시성 이슈 관련 정리
+1. 선착순 50명에게 스트리밍 무료 서비스 쿠폰을 발급해준다.
+2. 순간적으로 DB에 몰리는 트래픽부분을 생각하여
+   - Kafka를 이용해 쿠폰관련 Topic을 생성하여 (Producer, Consumer) DB를 요청하여 분산한다.
+3. 1인당 1명으로 제한한다.
+   - 쿠폰발급여부를 확인하는데 DB에까지 접근할 경우, Consumer에서 발급되어질 쿠폰 프로세스와 정확성이 떨어질 수 있다.
+     => redis sadd(set) 사용하여 쿠폰 발급 userId를 따로 저장한다.
+4. raceCondition으로 인한 동시성 문제를 생각한다.
+   - 해당 메소드에 한꺼번에 트래픽이 발생함으로써,
+     commit 되지 않은 직전 시점에 race condition을 생각
+     => redis를 이용하여 [쿠폰발급 수량] 정확성에 초점을 두고
+     redisTemplate.opsForValue().increment("coupon_count"); 을 사용한다.
+
+5. Executor를 만들어서 동시접근 사용자로 인한 정합성 테스트 코드 확인
+
+---
+
 ### 인기검색어
 
 1. nginx 통하여 인기검색어 로그 쌓기
    ```
    Q. nginx 위치 확인
-   A. brew info nginx
+   brew info nginx
    
    Q.ngnix 시작/종료/상태
    brew services start nginx
