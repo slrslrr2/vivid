@@ -18,7 +18,7 @@ class SongControllerTest {
 
     @Test
     @DisplayName("@ControllerAdvice 적용여부 확인")
-    public void controllerAdvicePassTest() throws Exception {
+    public void controller_advice_pass_test() throws Exception {
         mockMvc.perform(get("/test/list").param("date", "2022-04-03"))
                 .andExpect(status().isInternalServerError());
     }

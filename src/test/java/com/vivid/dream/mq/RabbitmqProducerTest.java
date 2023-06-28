@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class RabbitmqProducerTest {
 
@@ -13,7 +11,7 @@ class RabbitmqProducerTest {
     private RabbitmqProducer rabbitmqProducer;
 
     @Test
-    void sendMessage() {
+    void send_message() {
         rabbitmqProducer.sendMessage(1, "{key: key, value:value}");
     }
 }
