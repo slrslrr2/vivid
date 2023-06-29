@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -15,5 +15,5 @@ public class ResponseSong {
     private String songName;
     private String artist;
     private Integer ranking;
-    private Date createDate;
+    private LocalDateTime createDate;
 }

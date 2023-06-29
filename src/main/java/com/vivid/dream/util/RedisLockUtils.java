@@ -18,7 +18,6 @@ public class RedisLockUtils {
                 return true;
             }
 
-            // 만료
             String expectExpireStr = (String) redisTemplate.opsForValue().get(key);
             if (StringUtils.isBlank(expectExpireStr)) {
                 return false;
@@ -44,4 +43,9 @@ public class RedisLockUtils {
         }
     }
 
+    public static Long couponUserAdd(RedisTemplate redisTemplate, Long userId) {
+        return redisTemplate
+                .opsForSet()
+                .add("applied_user", userId.toString());
+    }
 }
