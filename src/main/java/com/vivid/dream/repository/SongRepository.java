@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
     Long countByCreateDateAfter(LocalDateTime date);
-    List<Song> findAllByCreateDate(LocalDateTime date);
+//    List<Song> findAllByCreateDate(LocalDateTime date);
+    List<Song> findTop10ByOrderByCreateDateDesc();
 }

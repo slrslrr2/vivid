@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +18,8 @@ public class SongServiceImpl implements SongService {
     private final SongRepository songRepository;
 
     @Override
-    public List<ResponseSong> getSongList(String date) {
-        List<Song> songList = songRepository.findAllByCreateDate(LocalDateTime.parse(date));
+    public List<ResponseSong> getSongList() {
+        List<Song> songList = songRepository.findTop10ByOrderByCreateDateDesc();
 
         List<ResponseSong> result = new ArrayList<>();
         for (Song songVo : songList) {

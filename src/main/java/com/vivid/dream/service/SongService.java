@@ -5,5 +5,5 @@ import com.vivid.dream.vo.response.ResponseSong;
 import java.util.List;
 
 public interface SongService {
-    List<ResponseSong> getSongList(String date);
+    List<ResponseSong> getSongList();
 }

@@ -39,8 +39,8 @@ public class SongScheduled {
     @Resource(name = "songTaskExecutor")
     private TaskExecutor songTaskExecutor;
 
-//    @Scheduled(cron = "0 5 12 * * ?")
-    @Scheduled(cron = "1 * * * * ?")
+    @Scheduled(cron = "0 5 12 * * ?")
+//    @Scheduled(cron = "1 * * * * ?")
     public void crawlingMelonChart(){
         try {
             LocalDateTime now = LocalDateTime.now();
