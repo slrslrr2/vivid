@@ -6,7 +6,7 @@ on:
     branches: [ dev ]
 
 env:
-  PROJECT_NAME: cicd_project
+  PROJECT_NAME: vivid_project
   BUCKET_NAME: vivid-cicd-bucket
   CODE_DEPLOY_APP_NAME: vividapp
   DEPLOYMENT_GROUP_NAME: vividapp_deploy
