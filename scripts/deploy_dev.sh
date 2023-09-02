@@ -4,7 +4,7 @@ REPOSITORY=/home/ec2-user/vivid_project/dev
 cd $REPOSITORY
 
 APP_NAME=cicdproject
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
+JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'dream.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
